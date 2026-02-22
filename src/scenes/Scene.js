@@ -223,9 +223,9 @@ export default class Scene {
 	#addVolumetricLight() {
 		this.volumetricLight = new VolumetricLight({
 			color: 0xc5c3e7,
-			height: 1.0,
-			radiusBottom: 1.4,
-			radiusTop: 2.0,
+			height: 2.5,
+			radiusBottom: 1.55,
+			radiusTop: 1.8,
 			position: new THREE.Vector3(0, 0, 0),
 			pulseSpeed: 1.2,
 			pulseMin: 0.9,
