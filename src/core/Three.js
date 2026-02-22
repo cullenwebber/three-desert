@@ -2,7 +2,7 @@ import * as THREE from "three";
 import Stats from "stats-gl";
 import WebGLContext from "./WebGLContext";
 import Scene from "../scenes/Scene";
-import PostProcessing from "./Postprocessing";
+import PostProcessing from "./PostProcessing";
 
 class Three {
 	constructor(container) {
