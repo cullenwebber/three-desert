@@ -82,9 +82,9 @@ export default class Scene {
 			{ repeat: { x: 6, y: 6 } },
 		);
 		const textures = await sandTextures.loadTextures({
-			normal: "sand-dunes1_normal-ogl.png",
-			roughness: "sand-dunes1_roughness.png",
-			ao: "sand-dunes1_ao.png",
+			normal: "sand-dunes1_normal-ogl.webp",
+			roughness: "sand-dunes1_roughness.webp",
+			ao: "sand-dunes1_ao.webp",
 		});
 
 		this.sandMaterial = new THREE.MeshStandardMaterial({
