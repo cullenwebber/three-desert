@@ -136,7 +136,7 @@ export default class Scene {
 						return;
 					}
 
-					if (child.userData.name == "teleporter_light") {
+					if (child.userData.name.startsWith("teleporter_light")) {
 						child.material = this.emissionMaterial;
 						return;
 					}
@@ -156,12 +156,12 @@ export default class Scene {
 						return;
 					}
 
-					if (child.userData.name == "Teleporter") {
+					if (child.userData.name.startsWith("Teleporter")) {
 						child.material = this.scratchedMetal;
 						return;
 					}
 
-					if (child.userData.name.startsWith("Wiresmall")) {
+					if (child.userData.name == "Wiresmall.001") {
 						child.material = this.wirePulseMaterial;
 						return;
 					}
@@ -224,15 +224,32 @@ export default class Scene {
 		this.volumetricLight = new VolumetricLight({
 			color: 0xc5c3e7,
 			height: 2.25,
-			radiusBottom: 1.55,
-			radiusTop: 1.8,
+			radiusBottom: 1.6,
+			radiusTop: 1.6,
 			position: new THREE.Vector3(0, 0, 0),
 			pulseSpeed: 1.2,
 			pulseMin: 0.9,
 			pulseMax: 1.0,
 			opacity: 1.0,
 		});
+
 		this.scene.add(this.volumetricLight);
+
+		this.volumetricLightTop = new VolumetricLight({
+			color: 0xc5c3e7,
+			height: 2.25,
+			radiusBottom: 1.6,
+			radiusTop: 1.6,
+			position: new THREE.Vector3(0, 5.5, 0),
+			pulseSpeed: 1.2,
+			pulseMin: 0.9,
+			pulseMax: 1.0,
+			opacity: 1.0,
+		});
+
+		this.volumetricLightTop.rotation.z = Math.PI;
+
+		this.scene.add(this.volumetricLightTop);
 	}
 
 	#calculateAspectRatio() {
@@ -248,6 +265,8 @@ export default class Scene {
 		this.water && this.water.update(elapsed);
 		this.particles && this.particles.update(elapsed);
 		this.volumetricLight && this.volumetricLight.update(elapsed);
+		this.volumetricLightTop && this.volumetricLightTop.update(elapsed);
+
 		this.dust && this.dust.update(elapsed);
 
 		this.logoParticles && this.logoParticles.update(delta, elapsed);

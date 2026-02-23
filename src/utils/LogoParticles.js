@@ -162,7 +162,7 @@ void main() {
 
 export default class LogoParticles {
 	constructor(mesh, options = {}) {
-		const count = options.count || 12500;
+		const count = options.count || 10000;
 		const color = options.color || 0xd6e4f7;
 		const renderer = options.renderer;
 
@@ -171,9 +171,15 @@ export default class LogoParticles {
 		this.gpuSize = size;
 
 		const cylinderRatio = options.cylinderRatio || 0.1;
-		const cylinderRadiusBottom = options.cylinderRadiusBottom || 0.6;
-		const cylinderRadiusTop = options.cylinderRadiusTop || 0.9;
+		const cylinderRadiusBottom = options.cylinderRadiusBottom || 0.8;
+		const cylinderRadiusTop = options.cylinderRadiusTop || 1.0;
 		const cylinderHeight = options.cylinderHeight || 0.4;
+
+		// Top cylinder (mirrored above logo)
+		const topCylinderRatio = options.topCylinderRatio || 0.1;
+		const topCylinderRadiusBottom = options.topCylinderRadiusBottom || 1.0;
+		const topCylinderRadiusTop = options.topCylinderRadiusTop || 0.8;
+		const topCylinderHeight = options.topCylinderHeight || 0.4;
 
 		const sampler = new MeshSurfaceSampler(mesh).build();
 		const tempPosition = new THREE.Vector3();
@@ -189,22 +195,39 @@ export default class LogoParticles {
 		const baseData = baseTexture.image.data;
 
 		const totalPixels = size * size;
-		const cylinderCount = Math.floor(totalPixels * cylinderRatio);
+		const bottomCylCount = Math.floor(totalPixels * cylinderRatio);
+		const topCylCount = Math.floor(totalPixels * topCylinderRatio);
+		const logoCount = totalPixels - bottomCylCount - topCylCount;
+
+		// Top cylinder is mirrored above — offset from centerY
+		const topCenterY = -centerY + (bbox.min.y + bbox.max.y) * 0.5 * 2 - centerY;
+		const topY = centerY + cylinderHeight + topCylinderHeight + 3.45;
 
 		for (let i = 0; i < totalPixels; i++) {
-			if (i < totalPixels - cylinderCount) {
+			if (i < logoCount) {
 				// Logo surface particles
 				sampler.sample(tempPosition);
 				baseData[i * 4 + 0] = tempPosition.x;
 				baseData[i * 4 + 1] = tempPosition.y;
 				baseData[i * 4 + 2] = tempPosition.z;
-			} else {
-				// Tapered cylinder particles — radius lerps from bottom to top
+			} else if (i < logoCount + bottomCylCount) {
+				// Bottom tapered cylinder
 				const theta = Math.random() * Math.PI * 2;
-				const t = Math.random(); // 0 = bottom, 1 = top
+				const t = Math.random();
 				const y = (t - 0.5) * cylinderHeight + centerY;
 				const radius =
 					cylinderRadiusBottom + t * (cylinderRadiusTop - cylinderRadiusBottom);
+				baseData[i * 4 + 0] = Math.cos(theta) * radius;
+				baseData[i * 4 + 1] = y;
+				baseData[i * 4 + 2] = Math.sin(theta) * radius;
+			} else {
+				// Top tapered cylinder (mirrored above logo)
+				const theta = Math.random() * Math.PI * 2;
+				const t = Math.random();
+				const y = (t - 0.5) * topCylinderHeight + topY;
+				const radius =
+					topCylinderRadiusBottom +
+					t * (topCylinderRadiusTop - topCylinderRadiusBottom);
 				baseData[i * 4 + 0] = Math.cos(theta) * radius;
 				baseData[i * 4 + 1] = y;
 				baseData[i * 4 + 2] = Math.sin(theta) * radius;
@@ -294,7 +317,7 @@ export default class LogoParticles {
 
 		// Copy transform from original mesh
 		this.points.position.copy(mesh.position);
-		this.points.scale.copy(mesh.scale).multiplyScalar(1.5);
+		this.points.scale.copy(mesh.scale).multiplyScalar(1.25);
 		this.points.quaternion.copy(mesh.quaternion);
 	}
 
@@ -316,6 +339,6 @@ export default class LogoParticles {
 			this.gpuCompute.getCurrentRenderTarget(this.particlesVariable).texture;
 
 		this.points.rotation.y += delta * (1.0 + burst * 4.0);
-		this.points.position.y = Math.sin(elapsed * 1.5) * 0.1 + 3.5;
+		this.points.position.y = Math.sin(elapsed * 1.5) * 0.1 + 2.8;
 	}
 }
