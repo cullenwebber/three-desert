@@ -112,6 +112,7 @@ export default class VolumetricLight extends THREE.Mesh {
 		super(geometry, material);
 
 		this.position.copy(position);
+		this.rotation.y = -Math.PI / 2;
 	}
 
 	update(elapsed) {
